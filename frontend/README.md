@@ -26,6 +26,17 @@ CRA reenvía `/api` al servidor Express en el puerto 5000. La interfaz se abre e
 
 El servidor usa `mongodb://127.0.0.1:27017/jovenes_creativos` por defecto. Si tu MongoDB local requiere usuario y contraseña, o si usas Atlas, copia `backend/.env.example` como `backend/.env` y configura `MONGODB_URI`. No subas `.env` al repositorio.
 
+## Usar el frontend en StackBlitz
+
+StackBlitz ejecuta React; el backend con Mongoose debe desplegarse externamente porque el driver de MongoDB necesita conexiones TCP. Este repositorio incluye `../render.yaml` para desplegar el backend en Render.
+
+1. Despliega el Blueprint de Render desde tu repositorio.
+2. En Render, configura `MONGODB_URI` con tu URI de Atlas y `FRONTEND_ORIGINS` con el origen exacto del preview StackBlitz.
+3. Copia `.env.example` a `.env` en `frontend` y configura `REACT_APP_API_URL` con la URL HTTPS de Render.
+4. Reinicia `npm start` en StackBlitz.
+
+La conexión a MongoDB ocurre entre Render y Atlas; no desde StackBlitz. Nunca pongas la URI de Atlas en el frontend.
+
 ## Scripts del frontend
 
 ### `npm start`

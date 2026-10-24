@@ -267,3 +267,15 @@ npm start
 La terminal del backend muestra `API lista en http://localhost:5000`. CRA usa esa dirección como proxy; abre la URL que indique la terminal del frontend. En “Usuarios y reglas” las operaciones viajan por Express, el modelo Mongoose las valida y MongoDB guarda los documentos. El campo de estado del encabezado indica si la base está conectada.
 
 Para usar MongoDB Atlas, copia `backend/.env.example` a `backend/.env` y reemplaza `MONGODB_URI` por la URI del clúster. No compartas ni subas ese archivo.
+
+## Usar el frontend en StackBlitz
+
+StackBlitz puede ejecutar el frontend React, pero su entorno no siempre permite al driver MongoDB abrir el socket TCP hacia Atlas. Por eso el backend Express debe estar publicado en un host HTTPS externo. El archivo raíz `render.yaml` prepara el despliegue en Render.
+
+1. Sube este repositorio a GitHub y, en Render, crea un Blueprint desde ese repositorio. Render tomará `render.yaml` y desplegará el servicio cuyo directorio raíz es `backend`.
+2. En las variables de entorno del servicio Render, configura `MONGODB_URI` con la URI de Atlas y `FRONTEND_ORIGINS` con el origen exacto del preview StackBlitz (protocolo y dominio, sin ruta). No pongas credenciales en el repositorio.
+3. En Atlas, permite en **Network Access** las direcciones de salida del backend desplegado. No uses la IP de StackBlitz, porque la conexión a MongoDB sale desde Render.
+4. Copia `frontend/.env.example` a `frontend/.env` y configura `REACT_APP_API_URL` con la URL HTTPS pública de Render, sin una `/` al final.
+5. Reinicia `npm start` en StackBlitz para que Create React App cargue esa variable. React enviará `/api` al backend publicado; Express permitirá el preview solo si su origen está en `FRONTEND_ORIGINS`.
+
+La URL pública de Render y `REACT_APP_API_URL` no son secretos. La URI de MongoDB sí lo es. Si Atlas no acepta conexiones desde Render, revisa el allowlist de Atlas y las direcciones de salida que muestra el servicio Render.
